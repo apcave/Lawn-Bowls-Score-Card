@@ -170,12 +170,9 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
   const [scoreValue, changeScoreValue] = useState()
 
   if ((scoreValue !== "Delete") & (scoreValue !== value)) {
-    console.log("changeScoreValue : ", value, scoreValue)
     changeScoreValue(value)
     return
   }
-
-  console.log("SelectEndScore : ", value, scoreValue)
 
   function renderItem(item) {
     if ((item.label !== "-") & (item.label !== "Lost")) {
@@ -188,7 +185,6 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
   }
 
   function correctDropDown() {
-    console.log("correctDropDown() :", value, scoreValue)
     changeScoreValue(value)
   }
   return (
@@ -208,7 +204,6 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
           if (doDelete === false) {
             changeScoreValue("Delete")
             setTimeout(correctDropDown, 1)
-            console.log("Exiting onChange")
             return
           }
         }
