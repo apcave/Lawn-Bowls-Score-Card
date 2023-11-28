@@ -159,6 +159,13 @@ const score = [
   { label: "Delete", shots: "Delete" }
 ]
 
+/*  There is some complicated flow in this function as the Dropdown selection
+    can be cancelled. The Dropdown element needs to change the selection value
+    and then change it back to the original value on cancel. If it doesn't change
+    twice the selection label of the Dropdown box becomes out of sync with the
+    state object that controls the table. Perhaps the community Dropdown project
+    could be amended in the future. */
+
 function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
   const [scoreValue, changeScoreValue] = useState()
 
@@ -185,34 +192,6 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
     changeScoreValue(value)
   }
   return (
-    /*
-    ** This is the confirm select method, the alternative select method is used below.
-    <Dropdown
-      style={styles.dropdown}
-      placeholderStyle={styles.placeholderStyle}
-      selectedTextStyle={styles.selectedTextStyle}
-      inputSearchStyle={styles.inputSearchStyle}
-      confirmSelectItem
-      onConfirmSelectItem={async (item) => {
-        if (item.shots === "Delete") {
-          const doDelete = await YesNoPrompt(
-            "Are you sure?",
-            "Delete Score Card Row"
-          )
-          console.log("YesNoPrompt Exit :" + doDelete)
-          if (doDelete === false) {
-            return
-          }
-        }
-        changeCallback(item.shots, isUseScore, rowIndex)
-      }}
-      data={score}
-      labelField="label"
-      valueField="shots"
-      value={value}
-      renderItem={renderItem}
-    />
-    */
     <Dropdown
       style={styles.dropdown}
       placeholderStyle={styles.placeholderStyle}
@@ -228,7 +207,7 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
           console.log("YesNoPrompt Exit :" + doDelete)
           if (doDelete === false) {
             changeScoreValue("Delete")
-            setTimeout(correctDropDown, 10)
+            setTimeout(correctDropDown, 1)
             console.log("Exiting onChange")
             return
           }
