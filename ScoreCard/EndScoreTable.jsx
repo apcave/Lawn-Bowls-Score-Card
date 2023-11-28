@@ -160,6 +160,16 @@ const score = [
 ]
 
 function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
+  const [scoreValue, changeScoreValue] = useState()
+
+  if ((scoreValue !== "Delete") & (scoreValue !== value)) {
+    console.log("changeScoreValue : ", value, scoreValue)
+    changeScoreValue(value)
+    return
+  }
+
+  console.log("SelectEndScore : ", value, scoreValue)
+
   function renderItem(item) {
     if ((item.label !== "-") & (item.label !== "Lost")) {
       return (
@@ -170,7 +180,13 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
     }
   }
 
+  function correctDropDown() {
+    console.log("correctDropDown() :", value, scoreValue)
+    changeScoreValue(value)
+  }
   return (
+    /*
+    ** This is the confirm select method, the alternative select method is used below.
     <Dropdown
       style={styles.dropdown}
       placeholderStyle={styles.placeholderStyle}
@@ -190,14 +206,39 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
         }
         changeCallback(item.shots, isUseScore, rowIndex)
       }}
-      onChange={(item) => {
-        console.log("onChange :" + item)
+      data={score}
+      labelField="label"
+      valueField="shots"
+      value={value}
+      renderItem={renderItem}
+    />
+    */
+    <Dropdown
+      style={styles.dropdown}
+      placeholderStyle={styles.placeholderStyle}
+      selectedTextStyle={styles.selectedTextStyle}
+      inputSearchStyle={styles.inputSearchStyle}
+      onChange={async (item) => {
+        console.log("item :", item)
+        if (item.shots === "Delete") {
+          const doDelete = await YesNoPrompt(
+            "Are you sure?",
+            "Delete Score Card Row"
+          )
+          console.log("YesNoPrompt Exit :" + doDelete)
+          if (doDelete === false) {
+            changeScoreValue("Delete")
+            setTimeout(correctDropDown, 10)
+            console.log("Exiting onChange")
+            return
+          }
+        }
         changeCallback(item.shots, isUseScore, rowIndex)
       }}
       data={score}
       labelField="label"
       valueField="shots"
-      value={value}
+      value={scoreValue}
       renderItem={renderItem}
     />
   )

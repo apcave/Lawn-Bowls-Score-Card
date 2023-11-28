@@ -21,15 +21,6 @@ export default function GameDetails({
   return (
     <View style={styles.column}>
       <View style={styles.entryRow}>
-        <Text style={styles.labelText}>File Name</Text>
-        <TextInput
-          style={styles.inputText}
-          onChangeText={(t) => onChangeData(t, "fileName")}
-          maxLength={16}
-          value={gameDetails.fileName}
-        />
-      </View>
-      <View style={styles.entryRow}>
         <Text style={styles.labelText}>Competition</Text>
         <TextInput
           style={styles.inputText}
