@@ -177,15 +177,17 @@ function SelectEndScoreWheel({
 }) {
   const maxScore = gameDetails.numberBowls * gameDetails.teamSize
   const [scoreText, changeScoreText] = useState("-")
-  const [selectValues, changeSelectValues] = useState()
   const [scoreValue, changeScoreValue] = useState(1)
+  const [showText, changeShowText] = useState(true)
   const pickerRef = useRef()
 
   let value = curValue
   if (typeof value === "number") {
     value = value + " Up"
   }
-  changeScoreText(value)
+  if (scoreText !== value) {
+    changeScoreText(value)
+  }
 
   const wheelValues = []
   for (let i = 1; i <= maxScore; i++) {
@@ -193,7 +195,6 @@ function SelectEndScoreWheel({
   }
   wheelValues.push({ label: "Killed", value: "Killed" })
   wheelValues.push({ label: "Delete", value: "Delete" })
-  //changeSelectValues(wheelValues)
 
   async function selectedValue(itemValue, itemIndex) {
     if (itemValue === "Delete") {
@@ -207,33 +208,37 @@ function SelectEndScoreWheel({
       }
     }
     changeCallback(itemValue, isUseScore, rowIndex)
-    pickerRef.current.blur()
+    changeShowText(true)
   }
 
   function showWheel() {
+    console.log("showWheel")
     let tmp = curValue
     if (!(curValue === "-" || curValue === "Delete" || curValue === "Lost")) {
       tmp = 1
     }
     changeScoreValue(tmp)
 
-    pickerRef.current.focus()
+    changeShowText(false)
   }
 
   return (
     <>
-      <Text style={styles.dataText} onClick={showWheel}>
-        {scoreText}
-      </Text>
-      <Picker
-        ref={pickerRef}
-        selectedValue={scoreValue}
-        onValueChange={selectedValue}
-      >
-        {wheelValues.map((item, i) => (
-          <Picker.Item label={item.label} value={item.label} />
-        ))}
-      </Picker>
+      {showText ? (
+        <Text style={styles.dataText} onPress={showWheel}>
+          {scoreText}
+        </Text>
+      ) : (
+        <Picker
+          ref={pickerRef}
+          selectedValue={scoreValue}
+          onValueChange={selectedValue}
+        >
+          {wheelValues.map((item, i) => (
+            <Picker.Item key={i} label={item.label} value={item.label} />
+          ))}
+        </Picker>
+      )}
     </>
   )
 }
