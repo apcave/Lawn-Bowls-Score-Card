@@ -1,7 +1,7 @@
-import React, { useState } from "react"
+import { Picker } from "@react-native-picker/picker"
+import React, { useState, useRef } from "react"
 import { ScrollView, View, StyleSheet, Text, Platform } from "react-native"
 import { Dropdown } from "react-native-element-dropdown"
-import { Picker } from "react-native-wheel-pick"
 
 import YesNoPrompt from "../YesNoPrompt"
 
@@ -176,71 +176,64 @@ function SelectEndScoreWheel({
   rowIndex
 }) {
   const maxScore = gameDetails.numberBowls * gameDetails.teamSize
-  const [showText, changeShowText] = useState(false)
-  const [scoreValue, changeScoreValue] = useState()
+  const [scoreText, changeScoreText] = useState("-")
   const [selectValues, changeSelectValues] = useState()
+  const [scoreValue, changeScoreValue] = useState(1)
+  const pickerRef = useRef()
 
   let value = curValue
   if (typeof value === "number") {
     value = value + " Up"
   }
-  changeScoreValue(value)
+  changeScoreText(value)
 
-  async function selectedValue(value) {
-    if (value === "Delete") {
+  const wheelValues = []
+  for (let i = 1; i <= maxScore; i++) {
+    wheelValues.push({ label: i + " Up", value: i })
+  }
+  wheelValues.push({ label: "Killed", value: "Killed" })
+  wheelValues.push({ label: "Delete", value: "Delete" })
+  //changeSelectValues(wheelValues)
+
+  async function selectedValue(itemValue, itemIndex) {
+    if (itemValue === "Delete") {
       const doDelete = await YesNoPrompt(
         "Are you sure?",
         "Delete Score Card Row"
       )
-      if (doDelete === true) {
-        changeCallback(value, isUseScore, rowIndex)
+      if (doDelete === false) {
+        pickerRef.current.blur()
+        return
       }
-      return
     }
-
-    if (value === "Killed") {
-      changeCallback(value, isUseScore, rowIndex)
-      return
-    }
-
-    const score = +value.substring(0, value.length - 3)
-    console.log("Substring check :", score)
-    changeCallback(score, isUseScore, rowIndex)
+    changeCallback(itemValue, isUseScore, rowIndex)
+    pickerRef.current.blur()
   }
 
   function showWheel() {
-    const wheelValues = []
-    for (let i = 1; i <= maxScore; i++) {
-      wheelValues.push(i + " Up")
+    let tmp = curValue
+    if (!(curValue === "-" || curValue === "Delete" || curValue === "Lost")) {
+      tmp = 1
     }
-    wheelValues.push("Killed")
-    wheelValues.push("Delete")
-    changeSelectValues(wheelValues)
+    changeScoreValue(tmp)
 
-    let value = "1 Up"
-    if (
-      !(scoreValue === "-" || scoreValue === "Delete" || scoreValue === "Lost")
-    ) {
-      value = curValue + " Up"
-    }
-    changeScoreValue(value)
-    changeShowText(false)
+    pickerRef.current.focus()
   }
 
   return (
     <>
-      {showText ? (
-        <Text style={styles.dataText} onClick={showWheel}>
-          {scoreValue}
-        </Text>
-      ) : (
-        <Picker
-          style={{ backgroundColor: "white", width: 300, height: 215 }}
-          selectedValue={scoreValue}
-          pickerData={selectValues}
-          onValueChange={selectedValue}
-        />
-      )}
+      <Text style={styles.dataText} onClick={showWheel}>
+        {scoreText}
+      </Text>
+      <Picker
+        ref={pickerRef}
+        selectedValue={scoreValue}
+        onValueChange={selectedValue}
+      >
+        {wheelValues.map((item, i) => (
+          <Picker.Item label={item.label} value={item.label} />
+        ))}
+      </Picker>
     </>
   )
 }
