@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { ScrollView, View, StyleSheet, Text, Alert } from "react-native"
+import { ScrollView, View, StyleSheet, Text, Platform } from "react-native"
 import { Dropdown } from "react-native-element-dropdown"
 import { Picker } from "react-native-wheel-pick"
 
@@ -125,26 +125,123 @@ function EndScoreRow({
     <View style={styles.dataRow}>
       <Text style={[styles.dataText, { flex: 1 }]}>{endNumber}</Text>
       <View style={[styles.dataText, { flex: 2 }]}>
-        <SelectEndScore
-          gameDetails={gameDetails}
-          changeCallback={addEditNewRow}
-          curValue={usValue}
-          isUseScore
-          rowIndex={index}
-        />
+        {Platform.OS === "web" ? (
+          <SelectEndScoreDropdown
+            gameDetails={gameDetails}
+            changeCallback={addEditNewRow}
+            curValue={usValue}
+            isUseScore
+            rowIndex={index}
+          />
+        ) : (
+          <SelectEndScoreWheel
+            gameDetails={gameDetails}
+            changeCallback={addEditNewRow}
+            curValue={usValue}
+            isUseScore
+            rowIndex={index}
+          />
+        )}
       </View>
       <Text style={[styles.dataText, { flex: 1 }]}>{usTotal}</Text>
       <View style={[styles.dataText, { flex: 2 }]}>
-        <SelectEndScore
-          gameDetails={gameDetails}
-          changeCallback={addEditNewRow}
-          curValue={themValue}
-          isUseScore={false}
-          rowIndex={index}
-        />
+        {Platform.OS === "web" ? (
+          <SelectEndScoreDropdown
+            gameDetails={gameDetails}
+            changeCallback={addEditNewRow}
+            curValue={themValue}
+            isUseScore={false}
+            rowIndex={index}
+          />
+        ) : (
+          <SelectEndScoreWheel
+            gameDetails={gameDetails}
+            changeCallback={addEditNewRow}
+            curValue={themValue}
+            isUseScore={false}
+            rowIndex={index}
+          />
+        )}
       </View>
       <Text style={[styles.dataText, { flex: 1 }]}>{themTotal}</Text>
     </View>
+  )
+}
+
+function SelectEndScoreWheel({
+  gameDetails,
+  curValue,
+  changeCallback,
+  isUseScore,
+  rowIndex
+}) {
+  const maxScore = gameDetails.numberBowls * gameDetails.teamSize
+  const [showText, changeShowText] = useState(false)
+  const [scoreValue, changeScoreValue] = useState()
+  const [selectValues, changeSelectValues] = useState()
+
+  let value = curValue
+  if (typeof value === "number") {
+    value = value + " Up"
+  }
+  changeScoreValue(value)
+
+  async function selectedValue(value) {
+    if (value === "Delete") {
+      const doDelete = await YesNoPrompt(
+        "Are you sure?",
+        "Delete Score Card Row"
+      )
+      if (doDelete === true) {
+        changeCallback(value, isUseScore, rowIndex)
+      }
+      return
+    }
+
+    if (value === "Killed") {
+      changeCallback(value, isUseScore, rowIndex)
+      return
+    }
+
+    const score = +value.substring(0, value.length - 3)
+    console.log("Substring check :", score)
+    changeCallback(score, isUseScore, rowIndex)
+  }
+
+  function showWheel() {
+    const wheelValues = []
+    for (let i = 1; i <= maxScore; i++) {
+      wheelValues.push(i + " Up")
+    }
+    wheelValues.push("Killed")
+    wheelValues.push("Delete")
+    changeSelectValues(wheelValues)
+
+    let value = "1 Up"
+    if (
+      !(scoreValue === "-" || scoreValue === "Delete" || scoreValue === "Lost")
+    ) {
+      value = curValue + " Up"
+    }
+    changeScoreValue(value)
+    changeShowText(false)
+  }
+
+  return (
+    <>
+      {showText ? (
+        <Text style={styles.dataText} onClick={showWheel}>
+          {scoreValue}
+        </Text>
+      ) : (
+        <Picker
+          style={{ backgroundColor: "white", width: 300, height: 215 }}
+          selectedValue={scoreValue}
+          pickerData={selectValues}
+          onValueChange={selectedValue}
+        />
+      )}
+    </>
   )
 }
 
@@ -157,7 +254,7 @@ function EndScoreRow({
     state object that controls the table. Perhaps the community Dropdown project
     could be amended in the future. */
 
-function SelectEndScore({
+function SelectEndScoreDropdown({
   gameDetails,
   curValue,
   changeCallback,
@@ -177,9 +274,7 @@ function SelectEndScore({
   endScore.push({ label: "Killed", shots: "Killed" })
   endScore.push({ label: "Delete", shots: "Delete" })
 
-  console.log("Pre changeScoreValue :", scoreValue, curValue)
   if ((scoreValue !== "Delete") & (scoreValue !== curValue)) {
-    console.log("changeScoreValue :", curValue)
     changeScoreValue(curValue)
     return
   }
