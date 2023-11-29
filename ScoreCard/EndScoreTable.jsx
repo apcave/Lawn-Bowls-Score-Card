@@ -5,9 +5,9 @@ import { Dropdown } from "react-native-element-dropdown"
 import YesNoPrompt from "../YesNoPrompt"
 
 export default function EndScoreTable({
-  navigation,
   saveScoreCard,
   scoreCard,
+  gameDetails,
   changeScoreCard
 }) {
   // Save on each update.
@@ -99,6 +99,7 @@ export default function EndScoreTable({
             themTotal={item.themTotal}
             themValue={item.themValue}
             addEditNewRow={addEditNewRow}
+            gameDetails={gameDetails}
           />
         ))}
       </ScrollView>
@@ -113,7 +114,8 @@ function EndScoreRow({
   usTotal,
   themValue,
   themTotal,
-  addEditNewRow
+  addEditNewRow,
+  gameDetails
 }) {
   //console.log('EndScoreRow(props)')
   //console.log(props)
@@ -123,6 +125,7 @@ function EndScoreRow({
       <Text style={[styles.dataText, { flex: 1 }]}>{endNumber}</Text>
       <View style={[styles.dataText, { flex: 2 }]}>
         <SelectEndScore
+          gameDetails={gameDetails}
           changeCallback={addEditNewRow}
           value={usValue}
           isUseScore
@@ -132,6 +135,7 @@ function EndScoreRow({
       <Text style={[styles.dataText, { flex: 1 }]}>{usTotal}</Text>
       <View style={[styles.dataText, { flex: 2 }]}>
         <SelectEndScore
+          gameDetails={gameDetails}
           changeCallback={addEditNewRow}
           value={themValue}
           isUseScore={false}
@@ -144,20 +148,6 @@ function EndScoreRow({
 }
 
 // This is limited for the example valid score per end is 0 to 4, 6, 8 depending on the format of the game.
-const score = [
-  { label: "-", shots: "-" },
-  { label: "Lost", shots: "Lost" },
-  { label: "1 Up", shots: 1 },
-  { label: "2 Up", shots: 2 },
-  { label: "3 Up", shots: 3 },
-  { label: "4 Up", shots: 4 },
-  { label: "5 Up", shots: 5 },
-  { label: "6 Up", shots: 6 },
-  { label: "7 Up", shots: 7 },
-  { label: "8 Up", shots: 8 },
-  { label: "Killed", shots: "Killed" },
-  { label: "Delete", shots: "Delete" }
-]
 
 /*  There is some complicated flow in this function as the Dropdown selection
     can be cancelled. The Dropdown element needs to change the selection value
@@ -166,8 +156,25 @@ const score = [
     state object that controls the table. Perhaps the community Dropdown project
     could be amended in the future. */
 
-function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
+function SelectEndScore({
+  gameDetails,
+  value,
+  changeCallback,
+  isUseScore,
+  rowIndex
+}) {
   const [scoreValue, changeScoreValue] = useState()
+  const maxScore = gameDetails.numberBowls * gameDetails.teamSize
+
+  console.log("SelectEndScore", gameDetails, maxScore)
+  const endScore = []
+  for (let i = 1; i <= maxScore; i++) {
+    endScore.push({ label: i + " Up", shots: i })
+  }
+  endScore.push({ label: "-", shots: "-" })
+  endScore.push({ label: "Lost", shots: "Lost" })
+  endScore.push({ label: "Killed", shots: "Killed" })
+  endScore.push({ label: "Delete", shots: "Delete" })
 
   if ((scoreValue !== "Delete") & (scoreValue !== value)) {
     changeScoreValue(value)
@@ -209,7 +216,7 @@ function SelectEndScore({ value, changeCallback, isUseScore, rowIndex }) {
         }
         changeCallback(item.shots, isUseScore, rowIndex)
       }}
-      data={score}
+      data={endScore}
       labelField="label"
       valueField="shots"
       value={scoreValue}

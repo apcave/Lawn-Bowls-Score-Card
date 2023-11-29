@@ -122,6 +122,7 @@ export default function ScoreStack() {
               {...props}
               saveScoreCard={saveScoreCard}
               scoreCard={scoreCard}
+              gameDetails={gameDetails}
               changeScoreCard={changeScoreCard}
             />
           )}
@@ -166,9 +167,12 @@ function SavedGames({
     } catch (e) {
       console.error("Error loading score card :" + e.message)
     }
-    changeGameDetails(dataFile["gameDetails"])
-    changeTeamDetails(dataFile["teamDetails"])
+
     changeScoreCard(dataFile["scoreCard"])
+    changeTeamDetails(dataFile["teamDetails"])
+    const loadedGame = dataFile["gameDetails"]
+    loadedGame.cardDate = new Date(loadedGame.cardDate)
+    changeGameDetails(loadedGame)
   }
 
   async function deleteCard(fileName, index) {

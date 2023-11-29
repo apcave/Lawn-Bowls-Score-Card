@@ -38,14 +38,16 @@ export default function GameDetails({
           onChangeData={onChangeData}
         />
       </View>
-      <DateSelector onChangeData={onChangeData} />
+      <DateSelector
+        onChangeData={onChangeData}
+        gameDate={gameDetails.cardDate}
+      />
     </View>
   )
 }
 
-function DateSelector({ onChangeData }) {
+function DateSelector({ onChangeData, gameDate }) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
-  const [gameDate, setGameDate] = useState(new Date())
 
   const showDatePicker = () => {
     setDatePickerVisibility(true)
@@ -56,7 +58,6 @@ function DateSelector({ onChangeData }) {
   }
 
   const handleConfirm = (date) => {
-    setGameDate(date)
     console.warn("A date has been picked: ", date)
     hideDatePicker()
     onChangeData(date, "cardDate")
@@ -72,6 +73,7 @@ function DateSelector({ onChangeData }) {
         />
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
+          date={gameDate}
           mode="date"
           onConfirm={handleConfirm}
           onCancel={hideDatePicker}
