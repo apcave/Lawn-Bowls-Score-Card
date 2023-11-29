@@ -1,6 +1,13 @@
 import { Picker } from "@react-native-picker/picker"
 import React, { useState, useRef } from "react"
-import { ScrollView, View, StyleSheet, Text, Platform } from "react-native"
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  Text,
+  Platform,
+  Modal
+} from "react-native"
 import { Dropdown } from "react-native-element-dropdown"
 
 import YesNoPrompt from "../YesNoPrompt"
@@ -175,11 +182,11 @@ function SelectEndScoreWheel({
   isUseScore,
   rowIndex
 }) {
+  const pickerRef = useRef()
   const maxScore = gameDetails.numberBowls * gameDetails.teamSize
   const [scoreText, changeScoreText] = useState("-")
   const [scoreValue, changeScoreValue] = useState(1)
-  const [showText, changeShowText] = useState(true)
-  const pickerRef = useRef()
+  const [showPicker, changeShowPicker] = useState(false)
 
   let value = curValue
   if (typeof value === "number") {
@@ -197,18 +204,19 @@ function SelectEndScoreWheel({
   wheelValues.push({ label: "Delete", value: "Delete" })
 
   async function selectedValue(itemValue, itemIndex) {
+    console.log("selectedValue from picker")
     if (itemValue === "Delete") {
       const doDelete = await YesNoPrompt(
         "Are you sure?",
         "Delete Score Card Row"
       )
       if (doDelete === false) {
-        pickerRef.current.blur()
+        changeShowPicker(false)
         return
       }
     }
     changeCallback(itemValue, isUseScore, rowIndex)
-    changeShowText(true)
+    changeShowPicker(false)
   }
 
   function showWheel() {
@@ -219,26 +227,33 @@ function SelectEndScoreWheel({
     }
     changeScoreValue(tmp)
 
-    changeShowText(false)
+    changeShowPicker(true)
+    pickerRef.current.focus()
   }
 
   return (
     <>
-      {showText ? (
-        <Text style={styles.dataText} onPress={showWheel}>
-          {scoreText}
-        </Text>
-      ) : (
-        <Picker
-          ref={pickerRef}
-          selectedValue={scoreValue}
-          onValueChange={selectedValue}
-        >
-          {wheelValues.map((item, i) => (
-            <Picker.Item key={i} label={item.label} value={item.label} />
-          ))}
-        </Picker>
-      )}
+      <Modal transparent visible={showPicker}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text>Hello</Text>
+            <Picker
+              ref={pickerRef}
+              enabled
+              selectedValue={scoreValue}
+              onValueChange={selectedValue}
+            >
+              {wheelValues.map((item, i) => (
+                <Picker.Item key={i} label={item.label} value={item.value} />
+              ))}
+            </Picker>
+          </View>
+        </View>
+      </Modal>
+
+      <Text style={styles.dataText} onPress={showWheel}>
+        {scoreText}
+      </Text>
     </>
   )
 }
@@ -368,5 +383,30 @@ const styles = StyleSheet.create({
     fontSize: 18,
     justifyContent: "center",
     textAlign: "center"
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+
+  modalView: {
+    height: 200,
+    width: 200,
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   }
 })
