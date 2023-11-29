@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { ScrollView, View, StyleSheet, Text, Alert } from "react-native"
 import { Dropdown } from "react-native-element-dropdown"
+import { Picker } from "react-native-wheel-pick"
 
 import YesNoPrompt from "../YesNoPrompt"
 
@@ -127,7 +128,7 @@ function EndScoreRow({
         <SelectEndScore
           gameDetails={gameDetails}
           changeCallback={addEditNewRow}
-          value={usValue}
+          curValue={usValue}
           isUseScore
           rowIndex={index}
         />
@@ -137,7 +138,7 @@ function EndScoreRow({
         <SelectEndScore
           gameDetails={gameDetails}
           changeCallback={addEditNewRow}
-          value={themValue}
+          curValue={themValue}
           isUseScore={false}
           rowIndex={index}
         />
@@ -158,7 +159,7 @@ function EndScoreRow({
 
 function SelectEndScore({
   gameDetails,
-  value,
+  curValue,
   changeCallback,
   isUseScore,
   rowIndex
@@ -166,7 +167,7 @@ function SelectEndScore({
   const [scoreValue, changeScoreValue] = useState()
   const maxScore = gameDetails.numberBowls * gameDetails.teamSize
 
-  console.log("SelectEndScore", gameDetails, maxScore)
+  //console.log("SelectEndScore", gameDetails, maxScore)
   const endScore = []
   for (let i = 1; i <= maxScore; i++) {
     endScore.push({ label: i + " Up", shots: i })
@@ -176,8 +177,10 @@ function SelectEndScore({
   endScore.push({ label: "Killed", shots: "Killed" })
   endScore.push({ label: "Delete", shots: "Delete" })
 
-  if ((scoreValue !== "Delete") & (scoreValue !== value)) {
-    changeScoreValue(value)
+  console.log("Pre changeScoreValue :", scoreValue, curValue)
+  if ((scoreValue !== "Delete") & (scoreValue !== curValue)) {
+    console.log("changeScoreValue :", curValue)
+    changeScoreValue(curValue)
     return
   }
 
@@ -192,7 +195,7 @@ function SelectEndScore({
   }
 
   function correctDropDown() {
-    changeScoreValue(value)
+    changeScoreValue(curValue)
   }
   return (
     <Dropdown
