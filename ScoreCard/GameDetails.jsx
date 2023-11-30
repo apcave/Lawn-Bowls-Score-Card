@@ -1,5 +1,14 @@
+import { Picker } from "@react-native-picker/picker"
 import React, { useState } from "react"
-import { View, StyleSheet, Text, Button, TextInput } from "react-native"
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  TextInput,
+  Platform,
+  Modal
+} from "react-native"
 import { Dropdown } from "react-native-element-dropdown"
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 
@@ -134,6 +143,38 @@ function SelectBowlsFormat({ noBowls, noPlayers, onChangeData }) {
   )
 }
 
+function ModelWheelPicker({ wheelValues, changeCallback, selectedIndex }) {
+  const [showPicker, changeShowPicker] = useState(false)
+
+  function wheelSelected(itemValue, itemIndex) {
+    changeShowPicker(false)
+    changeCallback(itemValue)
+  }
+
+  return (
+    <>
+      <Modal transparent visible={showPicker}>
+        <View style={styles.centeredView}>
+          <Picker
+            style={styles.pickerWheel}
+            enabled
+            selectedValue={wheelValues[selectedIndex].value}
+            onValueChange={wheelSelected}
+          >
+            {wheelValues.map((item, i) => (
+              <Picker.Item key={i} label={item.label} value={item.value} />
+            ))}
+          </Picker>
+        </View>
+      </Modal>
+
+      <Text style={styles.textItem} onPress={() => changeShowPicker(true)}>
+        {wheelValues[selectedIndex].label}
+      </Text>
+    </>
+  )
+}
+
 const styles = StyleSheet.create({
   column: {
     flex: 1,
@@ -223,5 +264,25 @@ const styles = StyleSheet.create({
     padding: 5,
     width: 115,
     textAlign: "left"
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+
+  pickerWheel: {
+    width: 300,
+    backgroundColor: "white",
+    borderRadius: 20,
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   }
 })

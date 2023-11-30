@@ -1,5 +1,5 @@
 import { Picker } from "@react-native-picker/picker"
-import React, { useState, useRef } from "react"
+import React, { useState } from "react"
 import {
   ScrollView,
   View,
@@ -391,24 +391,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22
-  },
-
-  modalView: {
-    height: 200,
-    width: 200,
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
   },
 
   pickerWheel: {
