@@ -182,7 +182,6 @@ function SelectEndScoreWheel({
   isUseScore,
   rowIndex
 }) {
-  const pickerRef = useRef()
   const maxScore = gameDetails.numberBowls * gameDetails.teamSize
   const [scoreText, changeScoreText] = useState("-")
   const [scoreValue, changeScoreValue] = useState(1)
@@ -197,6 +196,7 @@ function SelectEndScoreWheel({
   }
 
   const wheelValues = []
+  wheelValues.push({ label: "-", value: "-" })
   for (let i = 1; i <= maxScore; i++) {
     wheelValues.push({ label: i + " Up", value: i })
   }
@@ -215,6 +215,12 @@ function SelectEndScoreWheel({
         return
       }
     }
+
+    if (itemValue === "-") {
+      changeShowPicker(false)
+      return
+    }
+
     changeCallback(itemValue, isUseScore, rowIndex)
     changeShowPicker(false)
   }
@@ -222,36 +228,31 @@ function SelectEndScoreWheel({
   function showWheel() {
     console.log("showWheel")
     let tmp = curValue
-    if (!(curValue === "-" || curValue === "Delete" || curValue === "Lost")) {
+    if (curValue === "Delete" || curValue === "Lost") {
       tmp = 1
     }
     changeScoreValue(tmp)
-
     changeShowPicker(true)
-    pickerRef.current.focus()
   }
 
   return (
     <>
       <Modal transparent visible={showPicker}>
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>Hello</Text>
-            <Picker
-              ref={pickerRef}
-              enabled
-              selectedValue={scoreValue}
-              onValueChange={selectedValue}
-            >
-              {wheelValues.map((item, i) => (
-                <Picker.Item key={i} label={item.label} value={item.value} />
-              ))}
-            </Picker>
-          </View>
+          <Picker
+            style={styles.pickerWheel}
+            enabled
+            selectedValue={scoreValue}
+            onValueChange={selectedValue}
+          >
+            {wheelValues.map((item, i) => (
+              <Picker.Item key={i} label={item.label} value={item.value} />
+            ))}
+          </Picker>
         </View>
       </Modal>
 
-      <Text style={styles.dataText} onPress={showWheel}>
+      <Text style={styles.textItem} onPress={showWheel}>
         {scoreText}
       </Text>
     </>
@@ -401,6 +402,19 @@ const styles = StyleSheet.create({
     padding: 35,
     alignItems: "center",
     shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+
+  pickerWheel: {
+    width: 300,
+    backgroundColor: "white",
+    borderRadius: 20,
     shadowOffset: {
       width: 0,
       height: 2
