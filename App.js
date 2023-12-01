@@ -1,5 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native"
-import { Realm, RealmProvider, useRealm, useQuery } from "@realm/react"
+import { NavigationContainer, ActivityIndicator } from "@react-navigation/native"
 import React, { useState } from "react"
 import {
   SafeAreaView,
@@ -9,7 +8,9 @@ import {
   Pressable,
   FlatList
 } from "react-native"
+import {AppProvider, UserProvider, RealmProvider} from '@realm/react'
 
+import {appId, baseUrl} from './atlasConfig.json'
 import ScoreStack from "./ScoreCard/ScoreHome"
 
 /* Google account login to https://cloud.mongodb.com/
@@ -20,22 +21,51 @@ https://www.npmjs.com/package/@realm/react
 const MongoDb = {
   Usersname: "BowlsBowlsBowls",
   Password: "ffqr3q80qVZHy2y4",
-  IP_Address: "101.176.33.99/32"
 
   "mongodb+srv://BowlsBowlsBowls:ffqr3q80qVZHy2y4@lawnbowls.abz4cdn.mongodb.net/?retryWrites=true&w=majority"
 
   FitzroyVictoria
   Vek0wvTgy4gGSG0v
+
+  appservices login --api-key vccmnbvo --private-api-key 41c8a02b-191c-4aef-ac2e-8900e8cccd76
+{
+    appId: "bowlsdata-xiczj",
+    PublicKey: "vccmnbvo"
+    PrivateKey: "41c8a02b-191c-4aef-ac2e-8900e8cccd76"
+}
 }
 */
 
 export default function App() {
   return (
-    //<SafeAreaView style={{ flex: 1 }}>
+    <AppProvider id={appId} baseUrl={baseUrl}>
+    <UserProvider fallback={WelcomeView}>
+    <RealmProvider
+          schema={[Item]}
+          sync={{
+            flexible: true,
+            onError: (_session, error) => {
+              // Show sync errors in the console
+              console.error(error);
+            },
+          }}
+          fallback={LoadingIndicator}>
+    <SafeAreaView>
     <NavigationContainer>
       <ScoreStack />
     </NavigationContainer>
-    //</SafeAreaView>
+    </SafeAreaView>
+    </RealmProvider>
+    </UserProvider>
+    </AppProvider>
+  )
+}
+
+function LoadingIndicator() {
+  return (
+    <View style={styles.activityContainer}>
+      <ActivityIndicator size="large" />
+    </View>
   )
 }
 
@@ -60,75 +90,11 @@ class Task extends Realm.Object {
   }
 }
 
-function AppWrapper() {
-  return (
-    <RealmProvider schema={[Task]}>
-      <TaskApp />
-    </RealmProvider>
-  )
-}
-
-function TaskApp() {
-  const realm = useRealm()
-  const tasks = useQuery(Task)
-  const [newDescription, setNewDescription] = useState("")
-
-  return (
-    <SafeAreaView>
-      <View
-        style={{ flexDirection: "row", justifyContent: "center", margin: 10 }}
-      >
-        <TextInput
-          value={newDescription}
-          placeholder="Enter new task description"
-          onChangeText={setNewDescription}
-        />
-        <Pressable
-          onPress={() => {
-            realm.write(() => {
-              realm.create("Task", Task.generate(newDescription))
-            })
-            setNewDescription("")
-          }}
-        >
-          <Text>➕</Text>
-        </Pressable>
-      </View>
-      <FlatList
-        data={tasks.sorted("createdAt")}
-        keyExtractor={(item) => item._id.toHexString()}
-        renderItem={({ item }) => {
-          return (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                margin: 10
-              }}
-            >
-              <Pressable
-                onPress={() =>
-                  realm.write(() => {
-                    item.isComplete = !item.isComplete
-                  })
-                }
-              >
-                <Text>{item.isComplete ? "✅" : "☑️"}</Text>
-              </Pressable>
-              <Text style={{ paddingHorizontal: 10 }}>{item.description}</Text>
-              <Pressable
-                onPress={() => {
-                  realm.write(() => {
-                    realm.delete(item)
-                  })
-                }}
-              >
-                <Text>🗑️</Text>
-              </Pressable>
-            </View>
-          )
-        }}
-      />
-    </SafeAreaView>
-  )
-}
+const styles = StyleSheet.create({
+  activityContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+});
