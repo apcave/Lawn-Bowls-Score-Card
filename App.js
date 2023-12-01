@@ -1,17 +1,12 @@
-import { NavigationContainer, ActivityIndicator } from "@react-navigation/native"
-import React, { useState } from "react"
-import {
-  SafeAreaView,
-  View,
-  TextInput,
-  Text,
-  Pressable,
-  FlatList
-} from "react-native"
-import {AppProvider, UserProvider, RealmProvider} from '@realm/react'
+import { NavigationContainer } from "@react-navigation/native"
+import { AppProvider, UserProvider, RealmProvider } from "@realm/react"
+import React from "react"
+import { SafeAreaView, View, StyleSheet, ActivityIndicator } from "react-native"
 
-import {appId, baseUrl} from './atlasConfig.json'
+import Item from "./ItemSchema"
 import ScoreStack from "./ScoreCard/ScoreHome"
+import WelcomeView from "./WelcomeView"
+import { appId, baseUrl } from "./atlasConfig.json"
 
 /* Google account login to https://cloud.mongodb.com/
     https://benestudio.co/mongodb-app-services-react-native/
@@ -39,24 +34,25 @@ const MongoDb = {
 export default function App() {
   return (
     <AppProvider id={appId} baseUrl={baseUrl}>
-    <UserProvider fallback={WelcomeView}>
-    <RealmProvider
+      <UserProvider fallback={WelcomeView}>
+        <RealmProvider
           schema={[Item]}
           sync={{
             flexible: true,
             onError: (_session, error) => {
               // Show sync errors in the console
-              console.error(error);
-            },
+              console.error(error)
+            }
           }}
-          fallback={LoadingIndicator}>
-    <SafeAreaView>
-    <NavigationContainer>
-      <ScoreStack />
-    </NavigationContainer>
-    </SafeAreaView>
-    </RealmProvider>
-    </UserProvider>
+          fallback={LoadingIndicator}
+        >
+          <SafeAreaView>
+            <NavigationContainer>
+              <ScoreStack />
+            </NavigationContainer>
+          </SafeAreaView>
+        </RealmProvider>
+      </UserProvider>
     </AppProvider>
   )
 }
@@ -69,32 +65,11 @@ function LoadingIndicator() {
   )
 }
 
-class Task extends Realm.Object {
-  static generate(description) {
-    return {
-      _id: new Realm.BSON.ObjectId(),
-      description,
-      createdAt: new Date()
-    }
-  }
-
-  static schema = {
-    name: "Task",
-    primaryKey: "_id",
-    properties: {
-      _id: "objectId",
-      description: "string",
-      isComplete: { type: "bool", default: false },
-      createdAt: "date"
-    }
-  }
-}
-
 const styles = StyleSheet.create({
   activityContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-});
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10
+  }
+})

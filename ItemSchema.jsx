@@ -1,18 +1,16 @@
-import Realm, {BSON} from 'realm';
+import { Realm } from "@realm/react"
 
-export class Item extends Realm.Object {
- 
+export default class Item extends Realm.Object {
   static schema = {
-    name: 'Item',
-    primaryKey: '_id',
+    name: "Item",
+    primaryKey: "_id",
     properties: {
       // This allows us to automatically generate a unique _id for each Item
-      _id: {type: 'objectId', default: () => new BSON.ObjectId()},
+      _id: { type: "objectId", default: () => new Realm.BSON.ObjectId() },
       // All todo items will default to incomplete
-      isComplete: {type: 'bool', default: false},
-      summary: 'string',
-      owner_id: 'string',
-    },
-
-  };
+      isComplete: { type: "bool", default: false },
+      summary: "string",
+      owner_id: "string"
+    }
+  }
 }
