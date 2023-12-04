@@ -1,4 +1,4 @@
-{
+export const atlasMongo = {
     "appId": "bowlsdata-xiczj",
     "appUrl": "https://realm.mongodb.com/groups/6567eacf69165e0973b13883/apps/656951341ffaa85f6c7f24fe",
     "baseUrl": "https://realm.mongodb.com",

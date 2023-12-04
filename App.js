@@ -6,7 +6,7 @@ import { SafeAreaView, View, StyleSheet, ActivityIndicator } from "react-native"
 import Item from "./ItemSchema"
 import ScoreStack from "./ScoreCard/ScoreHome"
 import WelcomeView from "./WelcomeView"
-import { appId, baseUrl } from "./atlasConfig.json"
+import { appId, baseUrl } from "./atlasConfig"
 
 /* Google account login to https://cloud.mongodb.com/
     https://benestudio.co/mongodb-app-services-react-native/
@@ -32,8 +32,9 @@ const MongoDb = {
 */
 
 export default function App() {
+  console.warn("Starting App.")
   return (
-    <AppProvider id={appId} baseUrl={baseUrl}>
+    <AppProvider id={atlasMongo.appId} baseUrl={atlasMongo.baseUrl}>
       <UserProvider fallback={WelcomeView}>
         <RealmProvider
           schema={[Item]}
