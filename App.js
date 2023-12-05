@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native"
 import { AppProvider, UserProvider, RealmProvider } from "@realm/react"
 import React from "react"
-import { SafeAreaView, View, StyleSheet, ActivityIndicator } from "react-native"
+import { SafeAreaView, View, Text, StyleSheet, ActivityIndicator } from "react-native"
 
 import Item from "./ItemSchema"
 import ScoreStack from "./ScoreCard/ScoreHome"
@@ -34,7 +34,7 @@ const MongoDb = {
 export default function App() {
   console.warn("Starting App.")
   return (
-    <AppProvider id={atlasMongo.appId} baseUrl={atlasMongo.baseUrl}>
+    <AppProvider id={appId} baseUrl={baseUrl}>
       <UserProvider fallback={WelcomeView}>
         <RealmProvider
           schema={[Item]}
@@ -48,6 +48,9 @@ export default function App() {
           fallback={LoadingIndicator}
         >
           <SafeAreaView>
+            <View>
+              <Text>Hello Alex Mongo Test</Text>
+            </View>
             <NavigationContainer>
               <ScoreStack />
             </NavigationContainer>
