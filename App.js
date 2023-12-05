@@ -1,12 +1,8 @@
-import { NavigationContainer } from "@react-navigation/native"
-import { AppProvider, UserProvider, RealmProvider } from "@realm/react"
-import React from "react"
-import { SafeAreaView, View, Text, StyleSheet, ActivityIndicator } from "react-native"
+import {NavigationContainer} from '@react-navigation/native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import React from 'react';
 
-import Item from "./ItemSchema"
-import ScoreStack from "./ScoreCard/ScoreHome"
-import WelcomeView from "./WelcomeView"
-import { appId, baseUrl } from "./atlasConfig"
+import ScoreStack from './ScoreCard/ScoreHome';
 
 /* Google account login to https://cloud.mongodb.com/
     https://benestudio.co/mongodb-app-services-react-native/
@@ -31,49 +27,15 @@ const MongoDb = {
 }
 */
 
-export default function App() {
-  console.warn("Starting App.")
+function App() {
+  console.warn('Starting App.');
   return (
-    <AppProvider id={appId} baseUrl={baseUrl}>
-      <UserProvider fallback={WelcomeView}>
-        <RealmProvider
-          schema={[Item]}
-          sync={{
-            flexible: true,
-            onError: (_session, error) => {
-              // Show sync errors in the console
-              console.error(error)
-            }
-          }}
-          fallback={LoadingIndicator}
-        >
-          <SafeAreaView>
-            <View>
-              <Text>Hello Alex Mongo Test</Text>
-            </View>
-            <NavigationContainer>
-              <ScoreStack />
-            </NavigationContainer>
-          </SafeAreaView>
-        </RealmProvider>
-      </UserProvider>
-    </AppProvider>
-  )
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <ScoreStack />
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
 }
 
-function LoadingIndicator() {
-  return (
-    <View style={styles.activityContainer}>
-      <ActivityIndicator size="large" />
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  activityContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 10
-  }
-})
+export default App;

@@ -1,10 +1,13 @@
 import React, {useCallback, useState} from 'react';
-import {Realm, useApp} from '@realm/react';
-import {StyleSheet, Text, View, Alert, SafeAreaView} from 'react-native';
+import Realm from 'realm';
+import {useApp} from '@realm/react';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {StyleSheet, Text, View, Alert} from 'react-native';
 import {Input, Button} from '@rneui/base';
 import {colors} from './Colors';
 
-export function WelcomeView() {
+export function WelcomeView(): React.ReactElement {
+  console.log("function WelcomeView()");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -24,7 +27,7 @@ export function WelcomeView() {
   const onPressSignIn = useCallback(async () => {
     try {
       await signIn();
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert(`Failed to sign in: ${error?.message}`);
     }
   }, [signIn]);
@@ -34,13 +37,13 @@ export function WelcomeView() {
     try {
       await app.emailPasswordAuth.registerUser({email, password});
       await signIn();
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert(`Failed to sign up: ${error?.message}`);
     }
   }, [signIn, app, email, password]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaProvider>
       <View style={styles.viewWrapper}>
         <Text style={styles.title}>My Sync App</Text>
         <Text style={styles.subtitle}>
@@ -95,7 +98,7 @@ export function WelcomeView() {
           </>
         )}
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

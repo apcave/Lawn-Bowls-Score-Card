@@ -1,4 +1,10 @@
 {
   "name": "ScoreCard",
-  "displayName": "ScoreCard"
+  "displayName": "ScoreCard",
+  "android": {
+    "package": "com.apcave.scorecard"
+  },
+  "ios": {
+    "bundleIdentifier": "com.apcave.scorecard"
+  }
 }
