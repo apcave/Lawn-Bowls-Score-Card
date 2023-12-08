@@ -1,6 +1,5 @@
 {
   "name": "ScoreCard",
-  "displayName": "ScoreCard",
   "android": {
     "package": "com.apcave.scorecard"
   },

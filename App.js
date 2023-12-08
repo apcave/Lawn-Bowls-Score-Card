@@ -31,9 +31,7 @@ function App() {
   console.warn('Starting App.');
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <ScoreStack />
-      </NavigationContainer>
+      <ScoreStack />
     </SafeAreaProvider>
   );
 }
