@@ -1,74 +1,74 @@
-import { Picker } from "@react-native-picker/picker"
-import React, { useState } from "react"
+import {Picker} from '@react-native-picker/picker';
+import React, {useState} from 'react';
 import {
   ScrollView,
   View,
   StyleSheet,
   Text,
   Platform,
-  Modal
-} from "react-native"
-import { Dropdown } from "react-native-element-dropdown"
+  Modal,
+} from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
 
-import YesNoPrompt from "../YesNoPrompt"
+import YesNoPrompt from '../YesNoPrompt';
 
 export default function EndScoreTable({
   saveScoreCard,
   scoreCard,
   gameDetails,
-  changeScoreCard
+  changeScoreCard,
 }) {
   // Save on each update.
-  saveScoreCard()
+  saveScoreCard();
 
   async function addEditNewRow(value, isUseScore, index) {
     //console.log("addEditNewRow()", value, isUseScore, index)
-    let newTable = scoreCard.map((item) => {
-      return { ...item }
-    })
+    let newTable = scoreCard.map(item => {
+      return {...item};
+    });
 
-    if (value === "Delete") {
-      newTable.splice(index, 1)
+    if (value === 'Delete') {
+      newTable.splice(index, 1);
     } else {
-      if (typeof value === "number") {
+      if (typeof value === 'number') {
         if (isUseScore) {
-          newTable[index].usValue = value
-          newTable[index].themValue = "Lost"
+          newTable[index].usValue = value;
+          newTable[index].themValue = 'Lost';
         } else {
-          newTable[index].usValue = "Lost"
-          newTable[index].themValue = value
+          newTable[index].usValue = 'Lost';
+          newTable[index].themValue = value;
         }
       } else {
         // Value must be killed.
-        newTable[index].usValue = "Killed"
-        newTable[index].themValue = "Killed"
+        newTable[index].usValue = 'Killed';
+        newTable[index].themValue = 'Killed';
       }
     }
 
     // Since the table is small update the entire contents after each edit.
-    let endNumber = 0
-    let usTotal = 0
-    let themTotal = 0
+    let endNumber = 0;
+    let usTotal = 0;
+    let themTotal = 0;
     for (let i = 0; i < newTable.length; i++) {
-      if (typeof newTable[i].usValue === "number") {
-        usTotal += newTable[i].usValue
+      if (typeof newTable[i].usValue === 'number') {
+        usTotal += newTable[i].usValue;
       }
 
-      if (typeof newTable[i].themValue === "number") {
-        themTotal += newTable[i].themValue
+      if (typeof newTable[i].themValue === 'number') {
+        themTotal += newTable[i].themValue;
       }
 
-      if (i === 0 || newTable[i - 1].usValue !== "Killed") endNumber += 1
+      if (i === 0 || newTable[i - 1].usValue !== 'Killed') endNumber += 1;
 
-      newTable[i].endNumber = endNumber
-      newTable[i].usTotal = usTotal
-      newTable[i].themTotal = themTotal
+      newTable[i].endNumber = endNumber;
+      newTable[i].usTotal = usTotal;
+      newTable[i].themTotal = themTotal;
     }
 
-    if (newTable.at(-1).usValue !== "-" && newTable.at(-1).themValue !== "-") {
-      endNumber = newTable.at(-1).endNumber
-      if (newTable.at(-1).usValue !== "Killed") {
-        endNumber += 1
+    if (newTable.at(-1).usValue !== '-' && newTable.at(-1).themValue !== '-') {
+      endNumber = newTable.at(-1).endNumber;
+      if (newTable.at(-1).usValue !== 'Killed') {
+        endNumber += 1;
       }
 
       newTable = [
@@ -76,25 +76,25 @@ export default function EndScoreTable({
         {
           endNumber,
           usTotal: newTable.at(-1).usTotal,
-          usValue: "-",
+          usValue: '-',
           themTotal: newTable.at(-1).themTotal,
-          themValue: "-",
-          changeTotals: null
-        }
-      ]
+          themValue: '-',
+          changeTotals: null,
+        },
+      ];
     }
     //console.log(newTable)
-    changeScoreCard(newTable)
+    changeScoreCard(newTable);
   }
 
   return (
-    <View style={{ padding: 10, flex: 1 }}>
+    <View style={{padding: 10, flex: 1}}>
       <View style={styles.titleRow}>
-        <Text style={[styles.titleText, { flex: 1 }]}>End</Text>
-        <Text style={[styles.titleText, { flex: 2 }]}>Shots</Text>
-        <Text style={[styles.titleText, { flex: 1 }]}>Total</Text>
-        <Text style={[styles.titleText, { flex: 2 }]}>Shots</Text>
-        <Text style={[styles.titleText, { flex: 1 }]}>Total</Text>
+        <Text style={[styles.titleText, {flex: 1}]}>End</Text>
+        <Text style={[styles.titleText, {flex: 2}]}>Shots</Text>
+        <Text style={[styles.titleText, {flex: 1}]}>Total</Text>
+        <Text style={[styles.titleText, {flex: 2}]}>Shots</Text>
+        <Text style={[styles.titleText, {flex: 1}]}>Total</Text>
       </View>
       <ScrollView>
         {scoreCard.map((item, i) => (
@@ -112,7 +112,7 @@ export default function EndScoreTable({
         ))}
       </ScrollView>
     </View>
-  )
+  );
 }
 
 function EndScoreRow({
@@ -123,16 +123,16 @@ function EndScoreRow({
   themValue,
   themTotal,
   addEditNewRow,
-  gameDetails
+  gameDetails,
 }) {
   //console.log('EndScoreRow(props)')
   //console.log(props)
 
   return (
     <View style={styles.dataRow}>
-      <Text style={[styles.dataText, { flex: 1 }]}>{endNumber}</Text>
-      <View style={[styles.dataText, { flex: 2 }]}>
-        {Platform.OS === "web" ? (
+      <Text style={[styles.dataText, {flex: 1}]}>{endNumber}</Text>
+      <View style={[styles.dataText, {flex: 2}]}>
+        {Platform.OS === 'web' ? (
           <SelectEndScoreDropdown
             gameDetails={gameDetails}
             changeCallback={addEditNewRow}
@@ -150,9 +150,9 @@ function EndScoreRow({
           />
         )}
       </View>
-      <Text style={[styles.dataText, { flex: 1 }]}>{usTotal}</Text>
-      <View style={[styles.dataText, { flex: 2 }]}>
-        {Platform.OS === "web" ? (
+      <Text style={[styles.dataText, {flex: 1}]}>{usTotal}</Text>
+      <View style={[styles.dataText, {flex: 2}]}>
+        {Platform.OS === 'web' ? (
           <SelectEndScoreDropdown
             gameDetails={gameDetails}
             changeCallback={addEditNewRow}
@@ -170,9 +170,9 @@ function EndScoreRow({
           />
         )}
       </View>
-      <Text style={[styles.dataText, { flex: 1 }]}>{themTotal}</Text>
+      <Text style={[styles.dataText, {flex: 1}]}>{themTotal}</Text>
     </View>
-  )
+  );
 }
 
 function SelectEndScoreWheel({
@@ -180,59 +180,59 @@ function SelectEndScoreWheel({
   curValue,
   changeCallback,
   isUseScore,
-  rowIndex
+  rowIndex,
 }) {
-  const maxScore = gameDetails.numberBowls * gameDetails.teamSize
-  const [scoreText, changeScoreText] = useState("-")
-  const [scoreValue, changeScoreValue] = useState(1)
-  const [showPicker, changeShowPicker] = useState(false)
+  const maxScore = gameDetails.numberBowls * gameDetails.teamSize;
+  const [scoreText, changeScoreText] = useState('-');
+  const [scoreValue, changeScoreValue] = useState(1);
+  const [showPicker, changeShowPicker] = useState(false);
 
-  let value = curValue
-  if (typeof value === "number") {
-    value = value + " Up"
+  let value = curValue;
+  if (typeof value === 'number') {
+    value = value + ' Up';
   }
   if (scoreText !== value) {
-    changeScoreText(value)
+    changeScoreText(value);
   }
 
-  const wheelValues = []
-  wheelValues.push({ label: "-", value: "-" })
+  const wheelValues = [];
+  wheelValues.push({label: '-', value: '-'});
   for (let i = 1; i <= maxScore; i++) {
-    wheelValues.push({ label: i + " Up", value: i })
+    wheelValues.push({label: i + ' Up', value: i});
   }
-  wheelValues.push({ label: "Killed", value: "Killed" })
-  wheelValues.push({ label: "Delete", value: "Delete" })
+  wheelValues.push({label: 'Killed', value: 'Killed'});
+  wheelValues.push({label: 'Delete', value: 'Delete'});
 
   async function selectedValue(itemValue, itemIndex) {
-    console.log("selectedValue from picker")
-    if (itemValue === "Delete") {
+    console.log('selectedValue from picker');
+    if (itemValue === 'Delete') {
       const doDelete = await YesNoPrompt(
-        "Are you sure?",
-        "Delete Score Card Row"
-      )
+        'Are you sure?',
+        'Delete Score Card Row',
+      );
       if (doDelete === false) {
-        changeShowPicker(false)
-        return
+        changeShowPicker(false);
+        return;
       }
     }
 
-    if (itemValue === "-") {
-      changeShowPicker(false)
-      return
+    if (itemValue === '-') {
+      changeShowPicker(false);
+      return;
     }
 
-    changeCallback(itemValue, isUseScore, rowIndex)
-    changeShowPicker(false)
+    changeCallback(itemValue, isUseScore, rowIndex);
+    changeShowPicker(false);
   }
 
   function showWheel() {
-    console.log("showWheel")
-    let tmp = curValue
-    if (curValue === "Delete" || curValue === "Lost") {
-      tmp = 1
+    console.log('showWheel');
+    let tmp = curValue;
+    if (curValue === 'Delete' || curValue === 'Lost') {
+      tmp = 1;
     }
-    changeScoreValue(tmp)
-    changeShowPicker(true)
+    changeScoreValue(tmp);
+    changeShowPicker(true);
   }
 
   return (
@@ -243,8 +243,7 @@ function SelectEndScoreWheel({
             style={styles.pickerWheel}
             enabled
             selectedValue={scoreValue}
-            onValueChange={selectedValue}
-          >
+            onValueChange={selectedValue}>
             {wheelValues.map((item, i) => (
               <Picker.Item key={i} label={item.label} value={item.value} />
             ))}
@@ -256,7 +255,7 @@ function SelectEndScoreWheel({
         {scoreText}
       </Text>
     </>
-  )
+  );
 }
 
 // This is limited for the example valid score per end is 0 to 4, 6, 8 depending on the format of the game.
@@ -273,38 +272,38 @@ function SelectEndScoreDropdown({
   curValue,
   changeCallback,
   isUseScore,
-  rowIndex
+  rowIndex,
 }) {
-  const [scoreValue, changeScoreValue] = useState()
-  const maxScore = gameDetails.numberBowls * gameDetails.teamSize
+  const [scoreValue, changeScoreValue] = useState();
+  const maxScore = gameDetails.numberBowls * gameDetails.teamSize;
 
   //console.log("SelectEndScore", gameDetails, maxScore)
-  const endScore = []
+  const endScore = [];
   for (let i = 1; i <= maxScore; i++) {
-    endScore.push({ label: i + " Up", shots: i })
+    endScore.push({label: i + ' Up', shots: i});
   }
-  endScore.push({ label: "-", shots: "-" })
-  endScore.push({ label: "Lost", shots: "Lost" })
-  endScore.push({ label: "Killed", shots: "Killed" })
-  endScore.push({ label: "Delete", shots: "Delete" })
+  endScore.push({label: '-', shots: '-'});
+  endScore.push({label: 'Lost', shots: 'Lost'});
+  endScore.push({label: 'Killed', shots: 'Killed'});
+  endScore.push({label: 'Delete', shots: 'Delete'});
 
-  if ((scoreValue !== "Delete") & (scoreValue !== curValue)) {
-    changeScoreValue(curValue)
-    return
+  if ((scoreValue !== 'Delete') & (scoreValue !== curValue)) {
+    changeScoreValue(curValue);
+    return;
   }
 
   function renderItem(item) {
-    if ((item.label !== "-") & (item.label !== "Lost")) {
+    if ((item.label !== '-') & (item.label !== 'Lost')) {
       return (
         <View style={styles.item}>
           <Text style={styles.textItem}>{item.label}</Text>
         </View>
-      )
+      );
     }
   }
 
   function correctDropDown() {
-    changeScoreValue(curValue)
+    changeScoreValue(curValue);
   }
   return (
     <Dropdown
@@ -312,21 +311,21 @@ function SelectEndScoreDropdown({
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
-      onChange={async (item) => {
-        console.log("item :", item)
-        if (item.shots === "Delete") {
+      onChange={async item => {
+        console.log('item :', item);
+        if (item.shots === 'Delete') {
           const doDelete = await YesNoPrompt(
-            "Are you sure?",
-            "Delete Score Card Row"
-          )
-          console.log("YesNoPrompt Exit :" + doDelete)
+            'Are you sure?',
+            'Delete Score Card Row',
+          );
+          console.log('YesNoPrompt Exit :' + doDelete);
           if (doDelete === false) {
-            changeScoreValue("Delete")
-            setTimeout(correctDropDown, 1)
-            return
+            changeScoreValue('Delete');
+            setTimeout(correctDropDown, 1);
+            return;
           }
         }
-        changeCallback(item.shots, isUseScore, rowIndex)
+        changeCallback(item.shots, isUseScore, rowIndex);
       }}
       data={endScore}
       labelField="label"
@@ -334,75 +333,77 @@ function SelectEndScoreDropdown({
       value={scoreValue}
       renderItem={renderItem}
     />
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   titleRow: {
-    flexDirection: "row",
-    height: 30
+    flexDirection: 'row',
+    height: 30,
+    backgroundColor: 'white',
   },
 
   titleText: {
     fontSize: 18,
     borderWidth: 2,
-    borderColor: "#000",
-    textAlign: "center"
+    borderColor: '#000',
+    textAlign: 'center',
   },
 
   dataRow: {
-    flexDirection: "row",
-    height: 30
+    flexDirection: 'row',
+    height: 30,
+    backgroundColor: 'white',
   },
 
   dataText: {
     fontSize: 18,
     borderWidth: 1,
-    borderColor: "#ddd",
-    justifyContent: "center",
-    textAlign: "center"
+    borderColor: '#ddd',
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   dropdown: {
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   placeholderStyle: {
     fontSize: 18,
-    justifyContent: "center",
-    textAlign: "center"
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   selectedTextStyle: {
     fontSize: 18,
-    justifyContent: "center",
-    textAlign: "center"
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   textItem: {
     fontSize: 18,
-    justifyContent: "center",
-    textAlign: "center"
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
   },
 
   pickerWheel: {
     width: 300,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
-  }
-})
+    elevation: 5,
+  },
+});

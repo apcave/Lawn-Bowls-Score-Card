@@ -1,16 +1,14 @@
 import React from 'react';
 import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {AppProvider, UserProvider, RealmProvider} from '@realm/react';
-import {appId, baseUrl} from './atlasConfig.json';
+import {appId, baseUrl} from '../atlasConfig.json';
 
-import App from './App';
+import {App} from './App';
 import {WelcomeView} from './WelcomeView';
 
-import {Item} from './ToDoList/ItemSchema';
-import {PlayerData} from './PlayerDataSchema';
+import {Item} from './ItemSchema';
 
 const LoadingIndicator = () => {
-  console.log("LoadingIndicator = ()")
   return (
     <View style={styles.activityContainer}>
       <ActivityIndicator size="large" />
@@ -29,7 +27,7 @@ export const AppWrapper = () => {
             onError: (_session, error) => {
               // Show sync errors in the console
               console.error(error);
-            }
+            },
           }}
           fallback={LoadingIndicator}>
           <App />
@@ -38,7 +36,7 @@ export const AppWrapper = () => {
     </AppProvider>
   );
 };
-//<App />
+
 const styles = StyleSheet.create({
   activityContainer: {
     flex: 1,

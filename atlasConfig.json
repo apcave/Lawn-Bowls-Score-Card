@@ -1,9 +1,9 @@
 {
-    "appId": "mytutorialapp-hycml",
-    "appUrl": "https://realm.mongodb.com/groups/6567eacf69165e0973b13883/apps/656d81f0cee22a98024a5f4b",
-    "baseUrl": "https://realm.mongodb.com",
-    "clientApiBaseUrl": "https://realm.mongodb.com",
-    "dataApiBaseUrl": "https://data.mongodb-api.com",
-    "dataExplorerLink": "https://cloud.mongodb.com/links/6567eacf69165e0973b13883/explorer/lawnbowls/database/collection/find",
-    "dataSourceName": "mongodb-atlas"
+  "appId": "bowlsusers-ncypr",
+  "appUrl": "https://realm.mongodb.com/groups/6567eacf69165e0973b13883/apps/656d81f0cee22a98024a5f4b",
+  "baseUrl": "https://realm.mongodb.com",
+  "clientApiBaseUrl": "https://realm.mongodb.com",
+  "dataApiBaseUrl": "https://data.mongodb-api.com",
+  "dataExplorerLink": "https://cloud.mongodb.com/links/6567eacf69165e0973b13883/explorer/lawnbowls/database/collection/find",
+  "dataSourceName": "mongodb-atlas"
 }

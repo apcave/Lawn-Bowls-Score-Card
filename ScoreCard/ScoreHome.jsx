@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState} from 'react';
@@ -29,21 +29,31 @@ import TeamDetails from './TeamDetails';
 import YesNoPrompt from '../YesNoPrompt';
 import GameList from './GameList';
 import UserSettings from './UserSettings';
+import TeamFeedback from './TeamFeedback';
+import {colors} from '../Colors';
+import {ItemListView} from '../ToDoList/ItemListView';
+const BowlsNavTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: colors.background,
+  },
+};
 
 const Stack = createStackNavigator();
 const AppStartTime = new Date();
 
 const initGameDetails = {
   fileName: 'Default Game',
-  competition: 'Pennant',
-  division: '-',
-  section: '-',
-  round: '-',
+  competition: 'Metro Pennant Midweek 7-A-Side',
+  division: 'Division 2',
+  section: 'Section 1',
+  round: '5',
   rink: '-',
   numberBowls: 2,
   teamSize: 4,
   cardDate: AppStartTime,
-  stopOnScore: false,
+  stopOnEnds: true,
   maxNumberEnds: 21,
   maxStopScore: 25,
 };
@@ -53,13 +63,18 @@ const initTeamDetails = {
   awayTeam: 'Team Name',
   hostClub: 'Host Club',
   usLead: 'Lead Name',
+  ratingLead: 0,
   usSecond: 'Second Name',
+  ratingSecond: 0,
   usThird: 'Third Name',
+  ratingThird: 0,
   usSkip: 'Skip Name',
+  ratingSkip: 0,
   themLead: 'Lead Name',
   themSecond: 'Second Name',
   themThird: 'Third Name',
   themSkip: 'Skip Name',
+  teamComments: 'Leave comment for selectors...',
 };
 
 const initScoreCard = [
@@ -92,7 +107,7 @@ export default function ScoreStack() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={BowlsNavTheme}>
       <Stack.Navigator
         screenOptions={({navigation}) => ({
           headerRight: () => (
@@ -106,12 +121,12 @@ export default function ScoreStack() {
             </Pressable>
           ),
         })}>
-        <Stack.Screen name="Match List">
+        <Stack.Screen name="Current Matches">
           {props => <GameList {...props} />}
         </Stack.Screen>
         <Stack.Screen name="Match Card">
           {props => (
-            <MyTabs
+            <MatchCardTabs
               {...props}
               saveScoreCard={saveScoreCard}
               gameDetails={gameDetails}
@@ -141,38 +156,8 @@ export default function ScoreStack() {
             />
           )}
         </Stack.Screen>
-        <Stack.Screen name="Details">
-          {props => (
-            <GameDetails
-              {...props}
-              saveScoreCard={saveScoreCard}
-              gameDetails={gameDetails}
-              changeGameDetails={changeGameDetails}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Team">
-          {props => (
-            <TeamDetails
-              {...props}
-              saveScoreCard={saveScoreCard}
-              teamSize={gameDetails.teamSize}
-              teamDetails={teamDetails}
-              changeTeamDetails={changeTeamDetails}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Card">
-          {props => (
-            <EndScoreTable
-              {...props}
-              saveScoreCard={saveScoreCard}
-              scoreCard={scoreCard}
-              gameDetails={gameDetails}
-              changeScoreCard={changeScoreCard}
-            />
-          )}
-        </Stack.Screen>
+
+        <Stack.Screen name="DoDoList" component={ItemListView} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -186,7 +171,7 @@ function SendMatchCard() {
   );
 }
 
-function MyTabs({
+function MatchCardTabs({
   navigation,
   saveScoreCard,
   gameDetails,
@@ -197,8 +182,13 @@ function MyTabs({
   changeScoreCard,
 }) {
   const Tab = createBottomTabNavigator();
+  const [detailsColor, changeDetailsColor] = useState('lime');
+  const [teamColor, changeTeamColor] = useState('red');
+  const [rateColor, changeRateColor] = useState('lime');
+  const [cardColor, changeCardColor] = useState('lime');
+  const [sendColor, changeSendColor] = useState('grey');
 
-  function showTeamDetails() {
+  function ShowTeamDetails() {
     return (
       <TeamDetails
         saveScoreCard={saveScoreCard}
@@ -209,7 +199,7 @@ function MyTabs({
     );
   }
 
-  function showGameDetails() {
+  function ShowGameDetails() {
     return (
       <GameDetails
         saveScoreCard={saveScoreCard}
@@ -219,7 +209,7 @@ function MyTabs({
     );
   }
 
-  function showEndScoreTable() {
+  function ShowEndScoreTable() {
     return (
       <EndScoreTable
         saveScoreCard={saveScoreCard}
@@ -230,45 +220,60 @@ function MyTabs({
     );
   }
 
+  function ShowTeamFeedback() {
+    return (
+      <TeamFeedback
+        gameDetails={gameDetails}
+        scoreCard={scoreCard}
+        teamDetails={teamDetails}
+        changeTeamDetails={changeTeamDetails}
+      />
+    );
+  }
+
   return (
     <Tab.Navigator screenOptions={{headerShown: false}}>
       <Tab.Screen
         name="Details"
-        component={showGameDetails}
+        component={ShowGameDetails}
         options={{
           tabBarLabel: 'Details',
-          tabBarIcon: ({color}) => (
-            <FontAwesome name="paperclip" color={'grey'} size={26} />
+          tabBarIcon: () => (
+            <FontAwesome name="paperclip" color={detailsColor} size={26} />
           ),
         }}
       />
       <Tab.Screen
         name="Team"
-        component={showTeamDetails}
+        component={ShowTeamDetails}
         options={{
           tabBarLabel: 'Team',
-          tabBarIcon: ({color}) => (
-            <Ionicons name="people-outline" color={'grey'} size={26} />
+          tabBarIcon: () => (
+            <Ionicons name="people-outline" color={teamColor} size={26} />
           ),
         }}
       />
       <Tab.Screen
         name="Rate"
-        component={SendMatchCard}
+        component={ShowTeamFeedback}
         options={{
           tabBarLabel: 'Rate',
-          tabBarIcon: ({color}) => (
-            <Ionicons name="ios-star-outline" color={'green'} size={26} />
+          tabBarIcon: () => (
+            <Ionicons name="ios-star-outline" color={rateColor} size={26} />
           ),
         }}
       />
       <Tab.Screen
         name="Score"
-        component={showEndScoreTable}
+        component={ShowEndScoreTable}
         options={{
           tabBarLabel: 'Score',
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="strategy" color={'g'} size={26} />
+          tabBarIcon: () => (
+            <MaterialCommunityIcons
+              name="strategy"
+              color={cardColor}
+              size={26}
+            />
           ),
         }}
       />
@@ -277,8 +282,8 @@ function MyTabs({
         component={SendMatchCard}
         options={{
           tabBarLabel: 'Send',
-          tabBarIcon: ({color}) => (
-            <FontAwesome name="paper-plane-o" color={'blue'} size={26} />
+          tabBarIcon: () => (
+            <FontAwesome name="paper-plane-o" color={sendColor} size={26} />
           ),
         }}
       />

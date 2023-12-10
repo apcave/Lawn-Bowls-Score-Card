@@ -1,30 +1,30 @@
-import { Picker } from "@react-native-picker/picker"
-import React, { useState } from "react"
+import {Picker} from '@react-native-picker/picker';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
   Text,
   Button,
   TextInput,
-  Platform,
-  Modal
-} from "react-native"
-import { Dropdown } from "react-native-element-dropdown"
-import DateTimePickerModal from "react-native-modal-datetime-picker"
+  Switch,
+  Modal,
+} from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 export default function GameDetails({
   navigation,
   saveScoreCard,
   gameDetails,
-  changeGameDetails
+  changeGameDetails,
 }) {
   // Save on each update.
-  saveScoreCard()
+  saveScoreCard();
 
   function onChangeData(data, field) {
-    const newGameDetails = { ...gameDetails }
-    newGameDetails[field] = data
-    changeGameDetails(newGameDetails)
+    const newGameDetails = {...gameDetails};
+    newGameDetails[field] = data;
+    changeGameDetails(newGameDetails);
   }
 
   return (
@@ -33,9 +33,9 @@ export default function GameDetails({
         <Text style={styles.labelText}>Competition</Text>
         <TextInput
           style={styles.inputText}
-          onChangeText={(t) => onChangeData(t, "Competition")}
+          onChangeText={t => onChangeData(t, 'competition')}
           maxLength={16}
-          value={gameDetails.Competition}
+          value={gameDetails.competition}
         />
       </View>
 
@@ -51,26 +51,95 @@ export default function GameDetails({
         onChangeData={onChangeData}
         gameDate={gameDetails.cardDate}
       />
+      <View style={styles.entryRow}>
+        <Text style={styles.labelText}>Division</Text>
+        <TextInput
+          style={styles.inputText}
+          onChangeText={t => onChangeData(t, 'division')}
+          maxLength={16}
+          value={gameDetails.division}
+        />
+      </View>
+      <View style={styles.entryRow}>
+        <Text style={styles.labelText}>Section</Text>
+        <TextInput
+          style={styles.inputText}
+          onChangeText={t => onChangeData(t, 'section')}
+          maxLength={16}
+          value={gameDetails.section}
+        />
+      </View>
+      <View style={styles.entryRow}>
+        <Text style={styles.labelText}>Round</Text>
+        <TextInput
+          style={styles.inputText}
+          onChangeText={t => onChangeData(t, 'round')}
+          maxLength={16}
+          value={gameDetails.round}
+        />
+      </View>
+      <View style={styles.entryRow}>
+        <Text style={styles.labelText}>Rink</Text>
+        <TextInput
+          style={styles.inputText}
+          onChangeText={t => onChangeData(t, 'rink')}
+          maxLength={16}
+          value={gameDetails.rink}
+        />
+      </View>
+      <View style={styles.entryRow}>
+        <Text style={styles.labelText}>Max Ends</Text>
+        <View style={styles.toggle}>
+          <Switch
+            onValueChange={() =>
+              onChangeData(!gameDetails.stopOnEnds, 'stopOnEnds')
+            }
+            value={gameDetails.stopOnEnds}
+          />
+        </View>
+      </View>
+      {gameDetails.stopOnEnds && (
+        <View style={styles.entryRow}>
+          <Text style={styles.labelText}>Max Ends</Text>
+          <TextInput
+            style={styles.inputText}
+            onChangeText={t => onChangeData(t, 'maxNumberEnds')}
+            maxLength={16}
+            value={gameDetails.maxNumberEnds.toString()}
+          />
+        </View>
+      )}
+      {!gameDetails.stopOnEnds && (
+        <View style={styles.entryRow}>
+          <Text style={styles.labelText}>Max Score</Text>
+          <TextInput
+            style={styles.inputText}
+            onChangeText={t => onChangeData(t, 'maxStopScore')}
+            maxLength={16}
+            value={gameDetails.maxStopScore.toString()}
+          />
+        </View>
+      )}
     </View>
-  )
+  );
 }
 
-function DateSelector({ onChangeData, gameDate }) {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
+function DateSelector({onChangeData, gameDate}) {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {
-    setDatePickerVisibility(true)
-  }
+    setDatePickerVisibility(true);
+  };
 
   const hideDatePicker = () => {
-    setDatePickerVisibility(false)
-  }
+    setDatePickerVisibility(false);
+  };
 
-  const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date)
-    hideDatePicker()
-    onChangeData(date, "cardDate")
-  }
+  const handleConfirm = date => {
+    console.warn('A date has been picked: ', date);
+    hideDatePicker();
+    onChangeData(date, 'cardDate');
+  };
 
   return (
     <View style={styles.entryRow}>
@@ -89,31 +158,31 @@ function DateSelector({ onChangeData, gameDate }) {
         />
       </View>
     </View>
-  )
+  );
 }
 
 const players = [
-  { label: "Single", noPlayers: 1 },
-  { label: "Pairs", noPlayers: 2 },
-  { label: "Triples", noPlayers: 3 },
-  { label: "Fours", noPlayers: 4 }
-]
+  {label: 'Single', noPlayers: 1},
+  {label: 'Pairs', noPlayers: 2},
+  {label: 'Triples', noPlayers: 3},
+  {label: 'Fours', noPlayers: 4},
+];
 
 const bowls = [
-  { label: "One Bowl", noBowls: 1 },
-  { label: "Two Bowl", noBowls: 2 },
-  { label: "Three Bowl", noBowls: 3 },
-  { label: "Four Bowl", noBowls: 4 }
-]
+  {label: 'One Bowl', noBowls: 1},
+  {label: 'Two Bowl', noBowls: 2},
+  {label: 'Three Bowl', noBowls: 3},
+  {label: 'Four Bowl', noBowls: 4},
+];
 
-function SelectBowlsFormat({ noBowls, noPlayers, onChangeData }) {
-  const renderItem = (item) => {
+function SelectBowlsFormat({noBowls, noPlayers, onChangeData}) {
+  const renderItem = item => {
     return (
       <View style={styles.item}>
         <Text style={styles.dropText}>{item.label}</Text>
       </View>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -123,8 +192,8 @@ function SelectBowlsFormat({ noBowls, noPlayers, onChangeData }) {
         labelField="label"
         valueField="noBowls"
         value={noBowls}
-        onChange={(item) => {
-          onChangeData(item.noBowls, "numberBowls")
+        onChange={item => {
+          onChangeData(item.noBowls, 'numberBowls');
         }}
         renderItem={renderItem}
       />
@@ -134,21 +203,21 @@ function SelectBowlsFormat({ noBowls, noPlayers, onChangeData }) {
         labelField="label"
         valueField="noPlayers"
         value={noPlayers}
-        onChange={(item) => {
-          onChangeData(item.noPlayers, "teamSize")
+        onChange={item => {
+          onChangeData(item.noPlayers, 'teamSize');
         }}
         renderItem={renderItem}
       />
     </>
-  )
+  );
 }
 
-function ModelWheelPicker({ wheelValues, changeCallback, selectedIndex }) {
-  const [showPicker, changeShowPicker] = useState(false)
+function ModelWheelPicker({wheelValues, changeCallback, selectedIndex}) {
+  const [showPicker, changeShowPicker] = useState(false);
 
   function wheelSelected(itemValue, itemIndex) {
-    changeShowPicker(false)
-    changeCallback(itemValue)
+    changeShowPicker(false);
+    changeCallback(itemValue);
   }
 
   return (
@@ -159,8 +228,7 @@ function ModelWheelPicker({ wheelValues, changeCallback, selectedIndex }) {
             style={styles.pickerWheel}
             enabled
             selectedValue={wheelValues[selectedIndex].value}
-            onValueChange={wheelSelected}
-          >
+            onValueChange={wheelSelected}>
             {wheelValues.map((item, i) => (
               <Picker.Item key={i} label={item.label} value={item.value} />
             ))}
@@ -172,27 +240,30 @@ function ModelWheelPicker({ wheelValues, changeCallback, selectedIndex }) {
         {wheelValues[selectedIndex].label}
       </Text>
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   column: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   entryRow: {
     height: 50,
-    flexDirection: "row",
-    justifyContent: "left",
-    textAlign: "center"
+    flexDirection: 'row',
+    justifyContent: 'left',
+    textAlign: 'center',
   },
 
   inputView: {
     height: 40,
     width: 220,
-    margin: 10
+    margin: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    backgroundColor: 'white',
   },
 
   inputText: {
@@ -202,29 +273,8 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 5,
     borderWidth: 1,
-    borderRadius: 5
-  },
-
-  inputTextUs: {
-    fontSize: 18,
-    height: 40,
-    width: 220,
-    margin: 10,
-    padding: 5,
-    borderWidth: 1,
     borderRadius: 5,
-    borderColor: "rgb(33, 150, 243)"
-  },
-
-  inputTextThem: {
-    fontSize: 18,
-    height: 40,
-    width: 220,
-    margin: 10,
-    padding: 5,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: "rgb(243, 33, 33)"
+    backgroundColor: 'white',
   },
 
   dropBowlsText: {
@@ -235,7 +285,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderWidth: 1,
     borderRadius: 5,
-    padding: 5
+    backgroundColor: 'white',
+    padding: 5,
   },
 
   dropPlayersText: {
@@ -244,14 +295,15 @@ const styles = StyleSheet.create({
     margin: 10,
     borderWidth: 1,
     borderRadius: 5,
-    padding: 5
+    backgroundColor: 'white',
+    padding: 5,
   },
 
   dropText: {
     fontSize: 18,
     height: 30,
-    justifyContent: "center",
-    textAlign: "center"
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   labelText: {
@@ -263,26 +315,35 @@ const styles = StyleSheet.create({
     marginRight: 5,
     padding: 5,
     width: 115,
-    textAlign: "left"
+    textAlign: 'left',
+  },
+
+  toggle: {
+    height: 40,
+    width: 220,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 5,
+    padding: 5,
   },
 
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
   },
 
   pickerWheel: {
     width: 300,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
-  }
-})
+    elevation: 5,
+  },
+});
