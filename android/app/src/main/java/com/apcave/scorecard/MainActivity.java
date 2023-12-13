@@ -1,4 +1,4 @@
-package com.apcave.scorecard;
+package com.apcave.ScoreCard;
 
 import android.os.Build;
 import android.os.Bundle;
