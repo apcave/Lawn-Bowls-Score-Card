@@ -7,7 +7,7 @@ import App from './App';
 import {WelcomeView} from './WelcomeView';
 
 import {Item} from './ToDoList/ItemSchema';
-import {PlayerData} from './PlayerDataSchema';
+import {PlayerData} from './ScoreCard/RealmClasses';
 
 const LoadingIndicator = () => {
   console.log("LoadingIndicator = ()")
@@ -23,7 +23,7 @@ export const AppWrapper = () => {
     <AppProvider id={appId} baseUrl={baseUrl}>
       <UserProvider fallback={WelcomeView}>
         <RealmProvider
-          schema={[Item]}
+          schema={[Item, PlayerData]}
           sync={{
             flexible: true,
             onError: (_session, error) => {

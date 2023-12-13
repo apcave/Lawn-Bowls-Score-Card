@@ -1,63 +1,48 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, Text, TextInput, Button} from 'react-native';
+import {View, StyleSheet, Text, TextInput, Button, Alert} from 'react-native';
 import {BSON} from 'realm';
 import {useUser, useRealm, useQuery} from '@realm/react';
 import {Item} from '../ToDoList/ItemSchema';
+import {PlayerData} from './RealmClasses';
 
 export default function UserSettings({navigation}) {
   const realm = useRealm();
-  const userCol = useQuery(Item).sorted('_id');
-
-  //useQuery(PlayerData).filtered('PlayerKey == $0', user.id);
   const user = useUser();
 
+  userId = new BSON.ObjectId(user.id);
+  const userDataCol = useQuery(PlayerData).filtered('playerKey == $0', userId);
+  const userData = userDataCol[0];
+
   useEffect(() => {
-    console.log('useEffect, updating subscriptions');
     realm.subscriptions.update(mutableSubs => {
-      mutableSubs.removeByName('ownItems');
-      mutableSubs.add(realm.objects(Item), {name: 'items'});
+      mutableSubs.add(realm.objects(PlayerData), {name: 'UserData'});
     });
+
+    if (userDataCol.length === 0) {
+      console.log('Creating new user setting.', userDataCol);
+      realm.write(() => {
+        return new PlayerData(realm, {
+          firstName: 'This is a test',
+          playerKey: userId,
+        });
+      });
+    }
   });
 
-  console.log('realm', realm);
-  console.log('userCol', userCol);
-  console.log('user', user);
-  let curPlayerData = {};
-  //if (userCol.length === 8) {
-  // Create a new default user profile.
-
-  /*
-    curPlayerData = new PlayerData(realm, {
-      PlayerKey: user.id,
-      FirstName: 'First Name',
-      LastName: 'Last Name',
-      Email: '<EMAIL>',
-      FirstName: 'First Name',
-      LastName: 'Last Name',
-      PreferredName: '-',
-      playerKey: user.id,
-      StartedBowling: new Date(),
-      BirthYear: new Date(),
-      Gender: 'Unspecified',
-      PhoneNumber: '-',
-      EmergencyContactName: 'Emergency Contact',
-      EmergencyPhoneNumber: '-',
-      competitions: [],
-    });
-    */
-  //} else {
-  //  curPlayerData = userCol[0];
-  //}
-  console.log('UpdateUserSettings', curPlayerData, userCol);
-
   function UpdateUserSettings() {
-    console.log('UpdateUserSettings');
-    realm.write(() => {
-      return new Item(realm, {
-        summary: 'This is a test',
-        owner_id: user?.id,
-      });
-    });
+    console.log('Updating new user setting.', userDataCol);
+
+    //const item = realm.objectForPrimaryKey(PlayerData, id);
+    console.log('updating, item', userData, userId);
+    if (userData) {
+      if (userData.playerKey.toString() !== userId.toString()) {
+        Alert.alert("You can't modify someone else's user profile!");
+      } else {
+        realm.write(() => {
+          userData.firstName = 'Updated to Alex.';
+        });
+      }
+    }
   }
 
   return (
