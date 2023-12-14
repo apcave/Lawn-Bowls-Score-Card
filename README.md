@@ -122,4 +122,4 @@ then run the command
 npx expo run:android
 ```
 
-![alt text](https://github.com/apcave/Lawn-Bowls-Score-Card/blob/main/assets/icon.jpg?raw=true)
+![alt text](https://github.com/apcave/Lawn-Bowls-Score-Card/blob/main/assets/icon.png?raw=true)
