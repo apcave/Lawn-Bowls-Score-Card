@@ -2,8 +2,8 @@
 #
 .DS_Store
 
-.expo
-.bundle
+.expo/
+.bundle/
 
 # Xcode
 #
