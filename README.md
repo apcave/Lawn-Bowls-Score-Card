@@ -121,3 +121,5 @@ then run the command
 ```bash
 npx expo run:android
 ```
+
+![alt text](https://github.com/apcave/Lawn-Bowls-Score-Card/blob/main/assets/icon.jpg?raw=true)
