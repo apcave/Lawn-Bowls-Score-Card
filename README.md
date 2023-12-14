@@ -8,9 +8,9 @@ I develop on a **Mac** using **OSX** as it supports [iOS](https://docs.expo.dev/
 I also use using [vscode](https://code.visualstudio.com) for my IDE as it has many packages that assist with development.
 Although using the instructions provided the project can be built using the **CLI** of a **Mac** or a **Windows** machine with minor alterations.
 
-You will also require other software that I install on **OSX** using [Brew](https://brew.sh) including [Node](https://formulae.brew.sh/formula/node), [Yarn](https://formulae.brew.sh/formula/yarn) and [Open Java SDK v17](https://formulae.brew.sh/formula/openjdk@17).
+You will also require other software that I install on **OSX** using [Brew](https://brew.sh) including [Node](https://formulae.brew.sh/formula/node), [Yarn](https://formulae.brew.sh/formula/yarn) and [Open Java SDK v17](https://formulae.brew.sh/formula/openjdk@17). This software can be downloaded and installed manually from the projects websites although make sure the Java SDK is not too new I recommend version 17.
 
-The [Expo Go App](https://expo.dev/expo-go) does not work for more complicated builds. However for device testing, debugging and live editing of code can still done using an [EAS - Build](https://docs.expo.dev/build/introduction/) where the development build is done using an **Expo**, [Apple Developer](https://developer.apple.com) and **Google Developer** accounts. The iOS devices are registered for a particular build and have the requirement that the device is registered with my developer account. However if you have your a **Expo** account instructions are provided. Due to the stage of development the application is not available on **Google Play** or the **Apple Store** although the development path to register them is clear. Please contact me if you would like to test the application on your device.
+The [Expo Go App](https://expo.dev/expo-go) does not work for more complicated builds. However for device testing, debugging and live editing of code can still done using an [EAS - Build](https://docs.expo.dev/build/introduction/) where the development build is done using; **Expo**, [Apple Developer](https://developer.apple.com) and **Google Developer** accounts. The iOS devices are registered for a particular build and have the requirement that the device is registered with my developer account. Due to the stage of development the application is not available on **Google Play** or the **Apple Store** although the development path to register them is clear. Please contact me if you would like to test the application on your device.
 
 Following are build instructions for emulation on your computer and **EAS - Build** instructions if you already have the required accounts. Also, included is some information for developers that have difficulty building the application.
 
@@ -60,68 +60,64 @@ npx expo prebuild
 
 The **Expo** prebuild command does not currently do a complete job of configuring the **Android** and **iOS** builds and both require alteration of a file to point the build to the current application name.
 
-For **iOS** edit the file;
-```bash 
+## Rebuild for iOS.
+
+For **iOS** edit the file,
+
+```bash
 vim ./ios/ScoreCard/AppDelegate.mm
 ```
-Change the line
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+so,
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  self.moduleName = @"main";
 ```
 
-### For iOS
+is changed to
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  self.moduleName = @"ScoreCard";
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+then run this command
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+npx expo run:ios
+```
 
-## Step 3: Modifying your App
+## Rebuild for Android.
 
-Now that you have successfully run the app, let's modify it.
+For **Android** edit the file,
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+```bash
+vim ./android/app/src/main/java/com/apcave/scorecard/MainActivity.java
+```
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+so,
 
-## Congratulations! :tada:
+```bash
+  @Override
+  protected String getMainComponentName() {
+    return "main";
+  }
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+is changed to
 
-### Now what?
+```bash
+  @Override
+  protected String getMainComponentName() {
+    return "ScoreCard";
+  }
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+then run the command
 
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```bash
+npx expo run:android
+```

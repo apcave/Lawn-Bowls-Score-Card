@@ -11,6 +11,12 @@
       "eas": {
         "projectId": "0e489904-20ba-406d-bd17-638b2fd23f97"
       }
+    },
+    "android": {
+      "package": "com.apcave.scorecard"
+    },
+    "ios": {
+      "bundleIdentifier": "com.apcave.scorecard"
     }
   }
 }
